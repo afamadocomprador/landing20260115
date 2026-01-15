@@ -538,7 +538,8 @@ export const ClinicalOverlay = ({ isOpen, onClose }: ClinicalOverlayProps) => {
                         {servicePoints.map((sp) => (
                             <div key={sp.sp_id} ref={(el) => { if (el) itemRefs.current[sp.sp_id] = el }} onClick={() => handleClinicClick(sp)} className={`relative p-5 rounded-3xl border transition-all duration-200 cursor-pointer ${selectedSpId === sp.sp_id ? 'bg-[#F4F6E6] border-[#849700] ring-1 ring-[#849700]' : 'bg-white border-gray-100 shadow-sm hover:shadow-md'}`}>
                                 <div className="absolute top-5 right-5 z-10">
-                                    <Button size="icon" className="h-10 w-10 rounded-full bg-[#849700] hover:bg-[#43752B] shadow-md text-white" onClick={(e) => { e.stopPropagation(); handleClinicClick(sp); }}>
+                                    {/* CORREGIDO: size="icon" cambiado a size="sm" */}
+                                    <Button size="sm" className="h-10 w-10 rounded-full bg-[#849700] hover:bg-[#43752B] shadow-md text-white" onClick={(e) => { e.stopPropagation(); handleClinicClick(sp); }}>
                                         <Phone size={18} />
                                     </Button>
                                 </div>
