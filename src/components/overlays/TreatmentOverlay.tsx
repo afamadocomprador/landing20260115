@@ -110,9 +110,7 @@ export const TreatmentOverlay: React.FC<TreatmentOverlayProps> = ({ isOpen, onCl
           </button>
 
           <div className="mb-4 pr-8">
-            {/* CAMBIO 1: TÍTULO */}
             <h2 className="text-2xl lg:text-3xl font-lemon text-dkv-green-dark mb-1">Tratamientos cubiertos</h2>
-            {/* CAMBIO 2: SUBTÍTULO */}
             <p className="text-sm text-gray-500">Precios que te aplicarán vayas al dentista que vayas. Evita sorpresas.</p>
           </div>
           
@@ -207,10 +205,9 @@ export const TreatmentOverlay: React.FC<TreatmentOverlayProps> = ({ isOpen, onCl
         </div>
 
         {/* === FOOTER === */}
-        {/* CAMBIO 3: Eliminado el texto de copagos, solo queda el botón centrado o a la derecha */}
         <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end items-center shrink-0">
           <Button 
-            variant="outline" 
+            variant="secondary" 
             size="sm" 
             className="flex items-center gap-2 bg-white hover:bg-gray-100 border-gray-300 text-gray-600"
             onClick={() => window.open('/docs/PDF.Franquicias-dentales-Dentisalud-Elite.pdf')}
