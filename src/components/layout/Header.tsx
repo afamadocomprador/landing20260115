@@ -9,7 +9,7 @@ interface HeaderProps {
   onOpenCalculator?: () => void;
 }
 
-export const Header = ({ onOpenCalculator }: HeaderProps) => {
+export default function Header({ onOpenCalculator }: HeaderProps) {
   // Estado 1: Para encoger la cabecera (Logo y altura)
   const [isScrolled, setIsScrolled] = useState(false);
   // Estado 2: Para mostrar/ocultar el botón (CTA)
@@ -22,8 +22,7 @@ export const Header = ({ onOpenCalculator }: HeaderProps) => {
       // 1. Lógica de contracción de cabecera (más inmediata)
       setIsScrolled(scrollY > 50);
 
-      // 2. Lógica del botón: Aparece cuando bajamos bastante (aprox 350-400px)
-      //    Esto asegura que el botón del Hero ya ha salido de pantalla o casi.
+      // 2. Lógica del botón: Aparece cuando bajamos bastante (aprox 350px)
       setShowButton(scrollY > 350);
     };
 
@@ -41,7 +40,7 @@ export const Header = ({ onOpenCalculator }: HeaderProps) => {
     >
       <div className="container mx-auto h-full pl-0 pr-4 flex items-center justify-between">
         
-        {/* LOGO (Igual que antes) */}
+        {/* LOGO */}
         <div className="h-full relative flex items-center transition-all duration-300">
            <Link href="/" className="block h-full w-auto">
              <Image 
@@ -70,17 +69,15 @@ export const Header = ({ onOpenCalculator }: HeaderProps) => {
             ))}
           </nav>
           
-          {/* BOTÓN CON EFECTO DE APARICIÓN */}
+          {/* BOTÓN CON EFECTO DE APARICIÓN (SCROLL) */}
           <div className={`transition-all duration-500 ease-out transform ${
             showButton 
               ? "opacity-100 translate-y-0 pointer-events-auto" // Visible
-              : "opacity-0 translate-y-4 pointer-events-none"   // Oculto (desplazado abajo)
+              : "opacity-0 translate-y-4 pointer-events-none"   // Oculto
           }`}>
             <Button 
               variant="contract"
               onClick={onOpenCalculator}
-              // Aquí uso el diseño "Compacto" (scroll) que te gustaba, 
-              // ya que este botón SOLO se verá cuando hemos hecho scroll.
               className="shadow-lg hover:scale-105 transition-transform font-bold h-8 px-4 text-xs md:h-9 md:px-6 md:text-sm"
             >
               Calcula tu cuota ahora
@@ -91,4 +88,4 @@ export const Header = ({ onOpenCalculator }: HeaderProps) => {
       </div>
     </header>
   );
-};
+}
