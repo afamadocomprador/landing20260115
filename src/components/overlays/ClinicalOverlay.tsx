@@ -109,7 +109,6 @@ const MapController = ({
 }) => {
   const map = useMap();
   
-  // 1. Efecto para encuadrar todos los puntos al inicio
   useEffect(() => {
     if (points.length === 0) return;
     const timer = setTimeout(() => {
@@ -127,29 +126,17 @@ const MapController = ({
     return () => clearTimeout(timer);
   }, [points, map, bottomPadding]);
 
-  // 2. Efecto para "volar" al punto seleccionado CON OFFSET MANUAL
   useEffect(() => {
     if (selectedSpId) {
       const point = points.find(p => p.sp_id === selectedSpId);
       if (point) {
         const targetZoom = 16;
-        
-        // --- AQUÍ ESTÁ LA MAGIA MATEMÁTICA ---
-        // 1. Convertimos lat/long a píxeles en el zoom destino
+        // Lógica de offset manual para evitar el error de paddingBottomRight
         const targetPoint = map.project([point.latitude, point.longitude], targetZoom);
-        
-        // 2. Calculamos cuánto hay que bajar el centro del mapa 
-        // para que el pin quede visualmente más arriba.
-        // Si la hoja tapa 300px, bajamos el centro 150px.
-        const offsetY = bottomPadding / 2.5; // Dividido por 2.5 para un ajuste fino visual
-        
-        // 3. Obtenemos el nuevo centro en píxeles (sumamos Y para bajar)
+        const offsetY = bottomPadding / 2.5; 
         const targetCenterPoint = targetPoint.add([0, offsetY]);
-        
-        // 4. Convertimos esos píxeles de nuevo a lat/long
         const targetCenterLatLng = map.unproject(targetCenterPoint, targetZoom);
 
-        // 5. Volamos a ese centro calculado
         map.flyTo(targetCenterLatLng, targetZoom, {
           animate: true, 
           duration: 1.0
@@ -270,7 +257,6 @@ export const ClinicalOverlay = ({ isOpen, onClose }: ClinicalOverlayProps) => {
     }, () => { setLoading(false); alert("Error ubicación."); }, { enableHighAccuracy: true });
   };
 
-  // --- LÓGICA DE CLIC EN CENTRO (DEDUPLICACIÓN ALINEADA CON SQL) ---
   const handleClinicClick = async (clinic: ServicePoint) => {
       setSelectedSpId(clinic.sp_id);
       setLoading(true);
@@ -285,7 +271,6 @@ export const ClinicalOverlay = ({ isOpen, onClose }: ClinicalOverlayProps) => {
           
           data.forEach((row: any) => {
               let name = row.professional_name;
-              
               if (!name || name.trim() === '') return;
 
               name = name.trim();
@@ -551,7 +536,7 @@ export const ClinicalOverlay = ({ isOpen, onClose }: ClinicalOverlayProps) => {
                 {viewMode === 'map' && (
                     <motion.div key="clinic-list" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }} className="space-y-4">
                         {servicePoints.map((sp) => (
-                            <div key={sp.sp_id} ref={(el) => (itemRefs.current[sp.sp_id] = el)} onClick={() => handleClinicClick(sp)} className={`relative p-5 rounded-3xl border transition-all duration-200 cursor-pointer ${selectedSpId === sp.sp_id ? 'bg-[#F4F6E6] border-[#849700] ring-1 ring-[#849700]' : 'bg-white border-gray-100 shadow-sm hover:shadow-md'}`}>
+                            <div key={sp.sp_id} ref={(el) => { if (el) itemRefs.current[sp.sp_id] = el }} onClick={() => handleClinicClick(sp)} className={`relative p-5 rounded-3xl border transition-all duration-200 cursor-pointer ${selectedSpId === sp.sp_id ? 'bg-[#F4F6E6] border-[#849700] ring-1 ring-[#849700]' : 'bg-white border-gray-100 shadow-sm hover:shadow-md'}`}>
                                 <div className="absolute top-5 right-5 z-10">
                                     <Button size="icon" className="h-10 w-10 rounded-full bg-[#849700] hover:bg-[#43752B] shadow-md text-white" onClick={(e) => { e.stopPropagation(); handleClinicClick(sp); }}>
                                         <Phone size={18} />
