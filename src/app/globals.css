@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Simulación de rutas de fuentes (Deben estar en /public/fonts/) */
+@font-face {
+  font-family: 'Lemon Milk Pro';
+  src: url('/fonts/LemonMilkPro-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lemon Milk Pro';
+  src: url('/fonts/LemonMilkPro-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'FS Me';
+  src: url('/fonts/FSMe-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'FS Me';
+  src: url('/fonts/FSMe-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Estilos Base DKV */
+body {
+  @apply font-fsme text-dkv-gray bg-white antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-lemon text-dkv-green-dark uppercase; /* Vol 1, pág 37: Titulares en Lemon Milk */
+}
+
+h1 {
+  @apply text-4xl md:text-5xl font-bold;
+}
+
+h2 {
+  @apply text-3xl md:text-4xl font-bold;
+}
