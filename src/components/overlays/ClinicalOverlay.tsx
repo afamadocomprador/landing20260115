@@ -97,7 +97,7 @@ const createCustomIcon = (isSelected: boolean, count: number) => {
   });
 };
 
-// --- CONTROLADOR DEL MAPA ---
+// --- CONTROLADOR DEL MAPA (CON CÁLCULO DE OFFSET MANUAL) ---
 const MapController = ({ 
     points, 
     selectedSpId, 
@@ -108,6 +108,8 @@ const MapController = ({
     bottomPadding: number 
 }) => {
   const map = useMap();
+  
+  // 1. Efecto para encuadrar todos los puntos al inicio
   useEffect(() => {
     if (points.length === 0) return;
     const timer = setTimeout(() => {
@@ -125,18 +127,37 @@ const MapController = ({
     return () => clearTimeout(timer);
   }, [points, map, bottomPadding]);
 
+  // 2. Efecto para "volar" al punto seleccionado CON OFFSET MANUAL
   useEffect(() => {
     if (selectedSpId) {
       const point = points.find(p => p.sp_id === selectedSpId);
       if (point) {
-        map.flyTo([point.latitude, point.longitude], 16, {
+        const targetZoom = 16;
+        
+        // --- AQUÍ ESTÁ LA MAGIA MATEMÁTICA ---
+        // 1. Convertimos lat/long a píxeles en el zoom destino
+        const targetPoint = map.project([point.latitude, point.longitude], targetZoom);
+        
+        // 2. Calculamos cuánto hay que bajar el centro del mapa 
+        // para que el pin quede visualmente más arriba.
+        // Si la hoja tapa 300px, bajamos el centro 150px.
+        const offsetY = bottomPadding / 2.5; // Dividido por 2.5 para un ajuste fino visual
+        
+        // 3. Obtenemos el nuevo centro en píxeles (sumamos Y para bajar)
+        const targetCenterPoint = targetPoint.add([0, offsetY]);
+        
+        // 4. Convertimos esos píxeles de nuevo a lat/long
+        const targetCenterLatLng = map.unproject(targetCenterPoint, targetZoom);
+
+        // 5. Volamos a ese centro calculado
+        map.flyTo(targetCenterLatLng, targetZoom, {
           animate: true, 
-          duration: 1.0,
-          paddingBottomRight: [0, bottomPadding] 
+          duration: 1.0
         });
       }
     }
   }, [selectedSpId, points, map, bottomPadding]);
+
   return null;
 };
 
