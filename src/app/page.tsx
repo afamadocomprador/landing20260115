@@ -3,9 +3,14 @@
 import React, { useState } from 'react';
 // Importamos dynamic de next para componentes que usan 'window' (como mapas)
 import dynamic from 'next/dynamic';
+// Importamos Framer Motion para las animaciones de scroll
+import { motion } from "framer-motion";
+// Iconos
+import { Clock, Users, Diamond } from "lucide-react";
+import Image from "next/image";
+
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/Button";
-import Image from "next/image";
 
 // Importaciones normales para componentes seguros del servidor
 import { TreatmentOverlay } from '@/components/overlays/TreatmentOverlay';
@@ -20,6 +25,41 @@ const ClinicalOverlay = dynamic(
   }
 );
 
+// --- COMPONENTE FICHA ANIMADA (PUNTOS DE DOLOR) ---
+const PainPointCard = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => {
+  return (
+    <motion.div
+      className="bg-white p-8 rounded-xl border cursor-default"
+      // Estado Inicial (Reposo)
+      initial={{ 
+        y: 0, 
+        borderColor: "rgba(243, 244, 246, 1)", // gray-100
+        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" // shadow-md
+      }}
+      // Estado Activo (Cuando está en el centro de la pantalla)
+      whileInView={{
+        y: -8, // Efecto flotante sutil
+        borderColor: "#849700", // Borde Verde DKV
+        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" // shadow-xl
+      }}
+      // Configuración de la zona de activación (20% margen superior e inferior)
+      viewport={{ margin: "-20% 0px -20% 0px", amount: 0.5 }}
+      // Transición suave (Spring) para evitar mareos
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      <div className="mb-6 inline-block p-3 bg-dkv-green/5 rounded-full">
+        <Icon className="w-10 h-10 text-dkv-green" strokeWidth={1.5} />
+      </div>
+      <h3 className="text-xl font-bold font-lemon text-dkv-green-dark mb-3">
+        {title}
+      </h3>
+      <p className="text-dkv-gray leading-relaxed">
+        {description}
+      </p>
+    </motion.div>
+  );
+};
+
 export default function Home() {
   // Estados para controlar la visibilidad de los Overlays
   const [isClinicOpen, setIsClinicOpen] = useState(false);
@@ -33,7 +73,7 @@ export default function Home() {
       <Header onOpenCalculator={() => setIsCalculatorOpen(true)} />
 
       {/* --- HERO SECTION (SOLO ÉLITE) --- */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-dkv-gray-light">
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-white">
         
         <div className="container mx-auto px-4 relative z-10 flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-16">
           
@@ -70,48 +110,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* === BLOQUE DE BOTONES (FUERA DEL HILO) === */}
+            {/* === BLOQUE DE BOTONES (ELIMINADO BOTÓN CTA) === */}
             <div className="mt-6 pl-0 lg:pl-10">
-              <div className="flex flex-col sm:flex-row gap-4 justify-start">
-                
-                {/* BOTÓN ROJO PRINCIPAL (Visible siempre) */}
-                <Button 
-                  variant="contract" 
-                  size="lg" 
-                  className="w-full sm:w-auto shadow-xl hover:scale-105 transition-transform"
-                  onClick={() => setIsCalculatorOpen(true)}
-                >
-                  {/* MODIFICADO: Texto del botón */}
-                  Calcula tu cuota ahora
-                </Button>
-
-                {/* Botón Secundario con ICONO DE MAPA */}
-                <Button 
-                  variant="secondary" 
-                  size="lg" 
-                  className="w-full sm:w-auto bg-white border-2 border-dkv-green-dark text-dkv-green-dark hover:bg-dkv-green/10 flex items-center justify-center gap-2"
-                  onClick={() => setIsClinicOpen(true)}
-                >
-                  <Image 
-                    src="/icons/location-pin.svg" 
-                    alt="Mapa" 
-                    width={60} 
-                    height={60} 
-                    className="w-7 h-7 object-contain flex-shrink-0" 
-                  />
-                  
-                  {/* VERSIÓN MÓVIL */}
-                  <span className="sm:hidden font-bold text-lg">
-                    Dentistas
-                  </span>
-
-                  {/* VERSIÓN ESCRITORIO */}
-                  <span className="hidden sm:block font-bold">
-                    Encuentra tu Dentista
-                  </span>
-                </Button>
-              </div>
-              
               {/* Precio actualizado a la base de ÉLITE */}
               <p className="text-xs text-dkv-gray-disabled mt-4">
                 *Desde 10,90€/mes. Contratación 100% online en 3 minutos.
@@ -140,74 +140,89 @@ export default function Home() {
         </div>
       </section>
 
-
-      {/* --- SECCIÓN BUSCADOR --- */}
-      <section className="py-16 bg-white -mt-10 relative z-20">
+      {/* --- PUNTOS DE DOLOR (ANIMADOS AL SCROLL) --- */}
+      <section className="py-24 bg-[#F0EFED]">
         <div className="container mx-auto px-4">
-          <div className="bg-white p-8 rounded-xl shadow-dkv-card border border-dkv-gray-border max-w-4xl mx-auto">
-            {/* MODIFICADO: Título de sección */}
-            <h2 className="text-2xl font-lemon text-dkv-green-dark text-center mb-6">
-              ¿Cuánto me va a costar cada tratamiento?
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <PainPointCard 
+              icon={Clock}
+              title="Rapidez: Uso inmediato"
+              description="Sin carencias ni esperas. Contratación en tres minutos. Tú eliges el dentista y solicitas cita en su consulta."
+            />
+
+            <PainPointCard 
+              icon={Users}
+              title="Facilidad: Tus hijos incluidos gratis"
+              description="La salud de tus hijos es lo primero. Si aseguras a un adulto, los menores de 14 años entran gratis en la póliza. Pack familiar real."
+            />
+
+            <PainPointCard 
+              icon={Diamond}
+              title="Calidad: Prestigiosos dentistas"
+              description="Se dice pronto. Más de 1.460 clínicas dentales concertadas y más de 2.710 profesionales a tu disposición."
+            />
+
+          </div>
+        </div>
+      </section>
+
+      {/* --- SECCIÓN BUSCADOR DE TRATAMIENTOS --- */}
+      <section className="py-20 bg-white border-b border-dkv-gray-border">
+        <div className="container mx-auto px-4 text-center">
+            
+            <h2 className="text-4xl font-lemon text-dkv-green-dark mb-6">
+              Tratamientos.
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="md:col-span-2 relative">
-                <input 
-                  type="text" 
-                  placeholder="Ej: Endodoncia, Implante, Limpieza..." 
-                  className="w-full h-14 pl-6 pr-4 rounded-dkv border-2 border-dkv-gray-border focus:border-dkv-green focus:outline-none text-lg"
-                  onClick={() => setIsTreatmentOpen(true)}
-                />
-                <span className="absolute right-4 top-4 text-dkv-gray-disabled">🔍</span>
-              </div>
-              <Button 
-                variant="primary" 
-                className="h-14 text-lg"
-                onClick={() => setIsTreatmentOpen(true)}
-              >
-                {/* MODIFICADO: Texto del botón */}
-                Consulta tratamientos cubiertos
-              </Button>
-            </div>
-            {/* MODIFICADO: Texto y Color para mejor contraste SEO (Verde oscuro en vez de gris) */}
-            <p className="text-center text-sm font-medium text-dkv-green-dark mt-4">
-              Consulta nuestras tarifas al instante. Sin registros.
+            
+            <p className="text-xl text-dkv-gray font-fsme max-w-3xl mx-auto mb-10 leading-relaxed">
+              Numerosos servicios dentales gratuitos y resto a precios muy inferiores a mercado.
             </p>
-          </div>
+
+            <Button 
+              variant="primary" 
+              size="lg"
+              className="shadow-xl hover:scale-105 transition-transform text-lg px-8 py-6 h-auto"
+              onClick={() => setIsTreatmentOpen(true)}
+            >
+              Consultar tratamientos
+            </Button>
+            
+            <p className="text-sm font-medium text-dkv-green-dark mt-6">
+              Consulta nuestras tarifas dentales al instante. Sin registros.
+            </p>
+            
         </div>
       </section>
 
-      {/* --- PUNTOS DE DOLOR --- */}
-      <section className="py-20 bg-dkv-gray-light">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="bg-white p-8 rounded-lg hover:shadow-lg transition-shadow">
-              <div className="text-4xl mb-4">⏱️</div>
-              <h3 className="text-xl font-bold font-lemon text-dkv-green-dark mb-3">Rapidez: Uso desde el día 1</h3>
-              <p className="text-dkv-gray">
-                ¿Te duele una muela? No esperes 6 meses para que te atiendan. 
-              </p>
-            </div>
-            <div className="bg-white p-8 rounded-lg hover:shadow-lg transition-shadow">
-              <div className="text-4xl mb-4">👨‍👩‍👧‍👦</div>
-              <h3 className="text-xl font-bold font-lemon text-dkv-green-dark mb-3">Facilidad: Tus hijos incluidos gratis</h3>
-              <p className="text-dkv-gray">
-                La salud de tus hijos es lo primero. Si aseguras a un adulto, 
-                los menores de 14 años entran gratis en la póliza. Pack familiar real.
-              </p>
-            </div>
-            <div className="bg-white p-8 rounded-lg hover:shadow-lg transition-shadow">
-              <div className="text-4xl mb-4">💎</div>
-              <h3 className="text-xl font-bold font-lemon text-dkv-green-dark mb-3">Calidad: Tratamientos top a precio fácil</h3>
-              <p className="text-dkv-gray">
-                Accede a precios franquiciados muy por debajo del mercado privado. 
-                Ej: Implante completo desde 490€ (vs 1.200€ media mercado).
-              </p>
-            </div>
-          </div>
+      {/* --- SECCIÓN: DENTISTAS --- */}
+      <section className="py-20 bg-white border-t border-dkv-gray-border">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-lemon text-dkv-green-dark mb-6">
+            Dentistas.
+          </h2>
+          <p className="text-xl text-dkv-gray font-fsme max-w-3xl mx-auto mb-10 leading-relaxed">
+            Más de 2.000 dentistas asociados al plan <strong className="text-dkv-green-dark">DKV DENTISALUD ELITE</strong> en toda España. 
+            <br className="hidden md:block"/> Encuéntrelos en su provincia.
+          </p>
+          
+          <Button 
+            variant="primary" 
+            size="lg" 
+            className="shadow-xl hover:scale-105 transition-transform gap-3 text-lg px-8 py-6 h-auto"
+            onClick={() => setIsClinicOpen(true)}
+          >
+            <Image 
+              src="/icons/location-pin.svg" 
+              alt="Icono mapa" 
+              width={28} 
+              height={28} 
+              className="w-7 h-7 object-contain brightness-0 invert" 
+            />
+            Localiza tu dentista
+          </Button>
         </div>
       </section>
-
-      {/* MODIFICADO: SECCIÓN COMPARATIVA ELIMINADA */}
 
       {/* --- PRUEBA SOCIAL --- */}
       <section className="py-20 bg-dkv-green-dark text-white">
