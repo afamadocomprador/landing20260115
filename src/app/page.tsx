@@ -26,11 +26,11 @@ const ClinicalOverlay = dynamic(
   }
 );
 
-// --- COMPONENTE FICHA ANIMADA (PUNTOS DE DOLOR - APAISADA) ---
+// --- COMPONENTE FICHA ANIMADA (PUNTOS DE DOLOR - APAISADA & TEXTO GRANDE) ---
 const PainPointCard = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => {
   return (
     <motion.div
-      className="group bg-white p-6 rounded-xl border cursor-default"
+      className="group bg-white p-6 md:p-8 rounded-xl border cursor-default"
       // Estado Inicial (Reposo)
       initial={{ 
         y: 0, 
@@ -48,18 +48,20 @@ const PainPointCard = ({ icon: Icon, title, description }: { icon: any, title: s
       // Transición suave (Spring)
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
-      {/* HEADER HORIZONTAL: ICONO + TÍTULO (CORREGIDO: ALINEACIÓN VERTICAL CENTRADA) */}
-      <div className="flex items-center gap-4 mb-4">
+      {/* HEADER HORIZONTAL: ICONO + TÍTULO */}
+      <div className="flex items-center gap-5 mb-5">
         <div className="flex-shrink-0 p-3 bg-dkv-green/5 rounded-full group-hover:bg-dkv-green/10 transition-colors">
-          <Icon className="w-8 h-8 text-dkv-green" strokeWidth={1.5} />
+          {/* Icono aumentado a w-10 h-10 para balancear con texto grande */}
+          <Icon className="w-10 h-10 text-dkv-green" strokeWidth={1.5} />
         </div>
-        <h3 className="text-lg md:text-xl font-bold font-lemon text-dkv-green-dark group-hover:text-dkv-green transition-colors leading-tight">
+        {/* Título aumentado a text-2xl para mantener jerarquía */}
+        <h3 className="text-xl md:text-2xl font-bold font-lemon text-dkv-green-dark group-hover:text-dkv-green transition-colors leading-tight">
           {title}
         </h3>
       </div>
       
-      {/* CUERPO DE TEXTO */}
-      <p className="text-dkv-gray leading-relaxed text-sm md:text-base">
+      {/* CUERPO DE TEXTO AUMENTADO (text-lg en móvil, text-xl en desktop) */}
+      <p className="text-dkv-gray leading-relaxed text-lg md:text-xl font-fsme">
         {description}
       </p>
     </motion.div>
@@ -145,7 +147,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- PUNTOS DE DOLOR (ANIMADOS AL SCROLL + DISEÑO HORIZONTAL CENTRADO) --- */}
+      {/* --- PUNTOS DE DOLOR (ANIMADOS AL SCROLL + DISEÑO HORIZONTAL + TEXTO GRANDE) --- */}
       <section className="py-24 bg-[#F0EFED]">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -153,13 +155,13 @@ export default function Home() {
             <PainPointCard 
               icon={Clock}
               title="Rapidez: Uso inmediato"
-              description="Sin carencias ni esperas. Contratación en tres minutos. Tú eliges el dentista y solicitas cita en su consulta."
+              description="Sin carencias ni esperas. Asegúrate en tres minutos."
             />
 
             <PainPointCard 
               icon={Users}
-              title="Facilidad: Tus hijos incluidos"
-              description="La salud de tus hijos es lo primero. Si aseguras a un adulto, los menores de 14 años entran gratis en la póliza. Pack familiar real."
+              title="Facilidad: Uso claro"
+              description="Tú eliges el dentista y solicitas cita en su consulta para tu tratamiento. "
             />
 
             <PainPointCard 
@@ -225,7 +227,7 @@ export default function Home() {
               height={28} 
               className="w-7 h-7 object-contain brightness-0 invert" 
             />
-            Localiza tu dentista
+            Elige el dentista
           </Button>
         </div>
       </section>
