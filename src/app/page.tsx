@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 // Importamos Framer Motion para las animaciones de scroll
 import { motion } from "framer-motion";
 // Iconos
-import { Clock, Users, Diamond } from "lucide-react";
+import { Clock, Users, Diamond, MessageSquare } from "lucide-react"; // Añadido MessageSquare
 import Image from "next/image";
 
 // IMPORTACIÓN CORRECTA DEL HEADER (POR DEFECTO)
@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/Button";
 // Importaciones normales para componentes seguros del servidor
 import { TreatmentOverlay } from '@/components/overlays/TreatmentOverlay';
 import { CalculatorOverlay } from '@/components/overlays/CalculatorOverlay';
+// Asumimos que existirá este componente o lo crearemos en el siguiente paso
+import { ContactOverlay } from '@/components/overlays/ContactOverlay'; 
 
 // IMPORTACIÓN DINÁMICA DEL MAPA
 const ClinicalOverlay = dynamic(
@@ -26,42 +28,33 @@ const ClinicalOverlay = dynamic(
   }
 );
 
-// --- COMPONENTE FICHA ANIMADA (PUNTOS DE DOLOR - APAISADA & TEXTO GRANDE) ---
+// --- COMPONENTE FICHA ANIMADA (PUNTOS DE DOLOR - APAISADA) ---
 const PainPointCard = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => {
   return (
     <motion.div
-      className="group bg-white p-6 md:p-8 rounded-xl border cursor-default"
-      // Estado Inicial (Reposo)
+      className="group bg-white p-6 rounded-xl border cursor-default"
       initial={{ 
         y: 0, 
-        borderColor: "rgba(243, 244, 246, 1)", // gray-100
-        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" // shadow-md standard
+        borderColor: "rgba(243, 244, 246, 1)", 
+        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" 
       }}
-      // Estado Activo (Cuando está en el centro de la pantalla)
       whileInView={{
-        y: -8, // Efecto flotante sutil
-        borderColor: "#849700", // Borde Verde DKV
-        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" // shadow-xl
+        y: -8, 
+        borderColor: "#849700", 
+        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" 
       }}
-      // Configuración de la zona de activación
       viewport={{ margin: "-20% 0px -20% 0px", amount: 0.5 }}
-      // Transición suave (Spring)
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
-      {/* HEADER HORIZONTAL: ICONO + TÍTULO */}
-      <div className="flex items-center gap-5 mb-5">
+      <div className="flex items-center gap-4 mb-4">
         <div className="flex-shrink-0 p-3 bg-dkv-green/5 rounded-full group-hover:bg-dkv-green/10 transition-colors">
-          {/* Icono aumentado a w-10 h-10 para balancear con texto grande */}
-          <Icon className="w-10 h-10 text-dkv-green" strokeWidth={1.5} />
+          <Icon className="w-8 h-8 text-dkv-green" strokeWidth={1.5} />
         </div>
-        {/* Título aumentado a text-2xl para mantener jerarquía */}
-        <h3 className="text-xl md:text-2xl font-bold font-lemon text-dkv-green-dark group-hover:text-dkv-green transition-colors leading-tight">
+        <h3 className="text-lg md:text-xl font-bold font-lemon text-dkv-green-dark group-hover:text-dkv-green transition-colors leading-tight">
           {title}
         </h3>
       </div>
-      
-      {/* CUERPO DE TEXTO AUMENTADO (text-lg en móvil, text-xl en desktop) */}
-      <p className="text-dkv-gray leading-relaxed text-lg md:text-xl font-fsme">
+      <p className="text-dkv-gray leading-relaxed text-sm md:text-base">
         {description}
       </p>
     </motion.div>
@@ -73,6 +66,7 @@ export default function Home() {
   const [isClinicOpen, setIsClinicOpen] = useState(false);
   const [isTreatmentOpen, setIsTreatmentOpen] = useState(false);
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false); // Nuevo estado
 
   return (
     <main className="min-h-screen bg-white">
@@ -80,53 +74,41 @@ export default function Home() {
       {/* Conexión Header-Modal */}
       <Header onOpenCalculator={() => setIsCalculatorOpen(true)} />
 
-      {/* --- HERO SECTION (SOLO ÉLITE - FONDO BLANCO) --- */}
+      {/* 1. HERO SECTION */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-white">
-        
         <div className="container mx-auto px-4 relative z-10 flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-16">
-          
-          {/* 1. COLUMNA DE TEXTO */}
+          {/* Texto */}
           <div className="w-full lg:w-1/2 relative">
-            
-            {/* === BLOQUE ENMARCADO POR EL HILO === */}
             <div className="relative pl-8 lg:pl-10 pb-8 pr-4"> 
-              
-              {/* --- EL HILO CONDUCTOR --- */}
+              {/* Hilo conductor */}
               <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
                 <div className="absolute top-1 left-0 w-4 h-4 bg-white border-2 border-dkv-green-dark rounded-full z-20"></div>
                 <div className="absolute top-3 left-[7px] right-[7px] h-[calc(100%-15px)] border-l-2 border-b-2 border-dkv-green-dark rounded-bl-[30px] z-10">
                     <div className="absolute -right-[9px] -bottom-[9px] w-4 h-4 bg-white border-2 border-dkv-green-dark rounded-full z-20"></div>
                 </div>
               </div>
-              {/* ------------------------- */}
-
-              {/* CONTENIDO DENTRO DEL HILO */}
+              
               <div className="relative z-20 space-y-4 pt-1">
-                 {/* Badge ÉLITE */}
                  <span className="inline-block py-1 px-3 bg-dkv-green/10 text-dkv-green-dark font-bold text-xs uppercase tracking-wider rounded-full">
                   DKV Dentisalud Élite
                 </span>
-                
                 <h1 className="text-4xl lg:text-6xl font-lemon text-dkv-green-dark leading-tight">
                   Lo fácil es cuidar <br/>
                   <span className="text-dkv-green">tu sonrisa.</span>
                 </h1>
-                
                 <p className="text-lg lg:text-xl text-dkv-gray font-fsme max-w-lg">
                   <strong>Rapidez</strong> sin esperas. <strong>Calidad</strong> médica garantizada. Y la <strong>facilidad</strong> de unos precios claros que entiendes a la primera.
                 </p>
               </div>
             </div>
-
-            {/* === BLOQUE INFERIOR (TEXTO LEGAL - SIN BOTÓN) === */}
+            {/* Texto legal */}
             <div className="mt-6 pl-0 lg:pl-10">
               <p className="text-xs text-dkv-gray-disabled mt-4">
-                *Desde 10,90€/mes. Contratación 100% online en 3 minutos.
+                *Consulta nuestros dentistas y tarifas dentales al instante. Sin registros.
               </p>
             </div>
           </div>
-          
-          {/* 2. COLUMNA DE IMAGEN */}
+          {/* Imagen */}
           <div className="w-full lg:w-1/2 relative flex justify-center lg:block">
              <div className="relative w-full max-w-[280px] lg:max-w-md aspect-square mx-auto bg-dkv-green rounded-full overflow-hidden border-8 border-white shadow-2xl z-20">
                 <Image 
@@ -138,44 +120,50 @@ export default function Home() {
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
              </div>
-             {/* Badge flotante */}
              <div className="absolute top-0 right-10 lg:top-10 lg:right-10 bg-dkv-red text-white p-3 lg:p-4 rounded-full font-bold font-lemon shadow-lg transform rotate-12 text-center w-24 h-24 lg:w-32 lg:h-32 flex items-center justify-center leading-none z-30 text-xs lg:text-base">
                MENORES<br/>GRATIS
              </div>
           </div>
+        </div>
+      </section>
+
+      {/* 2. SECCIÓN: DENTISTAS (Movida arriba) */}
+      <section className="py-20 bg-white border-t border-dkv-gray-border">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-lemon text-dkv-green-dark mb-6">
+            Dentistas.
+          </h2>
+          <p className="text-xl text-dkv-gray font-fsme max-w-3xl mx-auto mb-10 leading-relaxed">
+            Tan fácil como elegir tu dentista y pedir cita en su consulta. Seguro que tienes uno cerca de tí.
+          </p>
+          
+          <Button 
+            variant="primary" 
+            size="lg" 
+            className="shadow-xl hover:scale-105 transition-transform gap-3 text-lg px-8 py-6 h-auto"
+            onClick={() => setIsClinicOpen(true)}
+          >
+            <Image 
+              src="/icons/location-pin.svg" 
+              alt="Icono mapa" 
+              width={28} 
+              height={28} 
+              className="w-7 h-7 object-contain brightness-0 invert" 
+            />
+            Elige tu dentista
+          </Button>
+
+          <p className="text-xl text-dkv-gray font-fsme max-w-3xl mx-auto mb-10 leading-relaxed">
+            Más de 2.000 dentistas asociados al plan <strong className="text-dkv-green-dark">DKV DENTISALUD ELITE</strong> en toda España. 
+          </p>
+
+
 
         </div>
       </section>
 
-      {/* --- PUNTOS DE DOLOR (ANIMADOS AL SCROLL + DISEÑO HORIZONTAL + TEXTO GRANDE) --- */}
-      <section className="py-24 bg-[#F0EFED]">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            
-            <PainPointCard 
-              icon={Clock}
-              title="Rapidez: Uso inmediato"
-              description="Sin carencias ni esperas. Asegúrate en tres minutos."
-            />
-
-            <PainPointCard 
-              icon={Users}
-              title="Facilidad: Uso claro"
-              description="Tú eliges el dentista y solicitas cita en su consulta para tu tratamiento. "
-            />
-
-            <PainPointCard 
-              icon={Diamond}
-              title="Calidad: Prestigiosos dentistas"
-              description="Se dice pronto. Más de 1.460 clínicas dentales concertadas y más de 2.710 profesionales a tu disposición."
-            />
-
-          </div>
-        </div>
-      </section>
-
-      {/* --- SECCIÓN BUSCADOR DE TRATAMIENTOS (LIMPIA - SOLO BOTÓN) --- */}
-      <section className="py-20 bg-white border-b border-dkv-gray-border">
+      {/* 3. SECCIÓN: TRATAMIENTOS (Movida después de Dentistas) */}
+      <section className="py-20 bg-white border-t border-dkv-gray-border">
         <div className="container mx-auto px-4 text-center">
             
             <h2 className="text-4xl font-lemon text-dkv-green-dark mb-6">
@@ -186,7 +174,6 @@ export default function Home() {
               Numerosos servicios dentales gratuitos y resto a precios muy inferiores a mercado.
             </p>
 
-            {/* Botón centrado sin el input */}
             <Button 
               variant="primary" 
               size="lg"
@@ -203,36 +190,59 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- SECCIÓN: DENTISTAS --- */}
+      {/* 4. NUEVA SECCIÓN: CONTACTO / DUDAS */}
       <section className="py-20 bg-white border-t border-dkv-gray-border">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-lemon text-dkv-green-dark mb-6">
-            Dentistas.
-          </h2>
-          <p className="text-xl text-dkv-gray font-fsme max-w-3xl mx-auto mb-10 leading-relaxed">
-            Más de 2.000 dentistas asociados al plan <strong className="text-dkv-green-dark">DKV DENTISALUD ELITE</strong> en toda España. 
-            <br className="hidden md:block"/> Encuéntrelos en su provincia.
-          </p>
-          
-          <Button 
-            variant="primary" 
-            size="lg" 
-            className="shadow-xl hover:scale-105 transition-transform gap-3 text-lg px-8 py-6 h-auto"
-            onClick={() => setIsClinicOpen(true)}
-          >
-            <Image 
-              src="/icons/location-pin.svg" 
-              alt="Icono mapa" 
-              width={28} 
-              height={28} 
-              className="w-7 h-7 object-contain brightness-0 invert" 
-            />
-            Elige el dentista
-          </Button>
+            
+            <h2 className="text-4xl font-lemon text-dkv-green-dark mb-6">
+              ¿Algo que comentar?
+            </h2>
+            
+            <p className="text-xl text-dkv-gray font-fsme max-w-3xl mx-auto mb-10 leading-relaxed">
+              Plantéanos cualquier duda sobre tus circunstancias y el seguro dental DKV.
+            </p>
+
+            <Button 
+              variant="primary" 
+              size="lg"
+              className="shadow-xl hover:scale-105 transition-transform gap-3 text-lg px-8 py-6 h-auto"
+              onClick={() => setIsContactOpen(true)}
+            >
+              <MessageSquare className="w-7 h-7" />
+              Contactar ahora
+            </Button>
+            
         </div>
       </section>
 
-      {/* --- PRUEBA SOCIAL --- */}
+      {/* 5. SECCIÓN: PUNTOS DE DOLOR (Movida abajo) */}
+      <section className="py-24 bg-[#F0EFED] border-t border-dkv-gray-border">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            
+            <PainPointCard 
+              icon={Clock}
+              title="Rapidez: Uso inmediato"
+              description="Sin carencias ni esperas. Contratación en tres minutos. Tú eliges el dentista y solicitas cita en su consulta."
+            />
+
+            <PainPointCard 
+              icon={Users}
+              title="Facilidad: Tus hijos incluidos"
+              description="La salud de tus hijos es lo primero. Si aseguras a un adulto, los menores de 14 años entran gratis en la póliza. Pack familiar real."
+            />
+
+            <PainPointCard 
+              icon={Diamond}
+              title="Calidad: Prestigiosos dentistas"
+              description="Se dice pronto. Más de 1.460 clínicas dentales concertadas y más de 2.710 profesionales a tu disposición."
+            />
+
+          </div>
+        </div>
+      </section>
+
+      {/* 6. PRUEBA SOCIAL */}
       <section className="py-20 bg-dkv-green-dark text-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-lemon text-center mb-12">Lo que dicen nuestros asegurados</h2>
@@ -286,7 +296,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- FAQ --- */}
+      {/* 7. FAQ */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 max-w-3xl">
           <h2 className="text-3xl font-lemon text-dkv-green-dark text-center mb-10">Preguntas Frecuentes</h2>
@@ -361,6 +371,17 @@ export default function Home() {
         isOpen={isCalculatorOpen} 
         onClose={() => setIsCalculatorOpen(false)} 
       />
+
+      {/* Placeholder para ContactOverlay hasta que lo creemos */}
+      {isContactOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50" onClick={() => setIsContactOpen(false)}>
+           <div className="bg-white p-10 rounded-lg">
+             <h2 className="text-2xl font-lemon text-dkv-green mb-4">Contactar con Asesor</h2>
+             <p>Aquí se cargará el componente ContactOverlay.</p>
+             <Button className="mt-4" onClick={() => setIsContactOpen(false)}>Cerrar</Button>
+           </div>
+        </div>
+      )}
       
     </main>
   );
