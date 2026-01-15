@@ -44,15 +44,15 @@ export const Header = ({ onOpenCalculator }: HeaderProps) => {
         {/* LOGO (Igual que antes) */}
         <div className="h-full relative flex items-center transition-all duration-300">
            <Link href="/" className="block h-full w-auto">
-              <Image 
-                src="/images/dkv-logo.png" 
-                alt="DKV Agente Exclusivo" 
-                width={0} 
-                height={0}
-                sizes="100vw"
-                className="h-full w-auto object-contain object-left" 
-                priority 
-              />
+             <Image 
+               src="/images/dkv-logo.png" 
+               alt="DKV Agente Exclusivo" 
+               width={0} 
+               height={0}
+               sizes="100vw"
+               className="h-full w-auto object-contain object-left" 
+               priority 
+             />
            </Link>
         </div>
 
@@ -83,7 +83,7 @@ export const Header = ({ onOpenCalculator }: HeaderProps) => {
               // ya que este botón SOLO se verá cuando hemos hecho scroll.
               className="shadow-lg hover:scale-105 transition-transform font-bold h-8 px-4 text-xs md:h-9 md:px-6 md:text-sm"
             >
-              Calcular Precio
+              Calcula tu cuota ahora
             </Button>
           </div>
 
