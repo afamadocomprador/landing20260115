@@ -9,32 +9,33 @@ import { motion } from "framer-motion";
 import { Clock, Users, Diamond } from "lucide-react";
 import Image from "next/image";
 
-import { Header } from "@/components/layout/Header";
+// IMPORTACIÓN CORRECTA DEL HEADER (POR DEFECTO)
+import Header from "@/components/layout/Header";
 import { Button } from "@/components/ui/Button";
 
 // Importaciones normales para componentes seguros del servidor
 import { TreatmentOverlay } from '@/components/overlays/TreatmentOverlay';
 import { CalculatorOverlay } from '@/components/overlays/CalculatorOverlay';
 
-// IMPORTACIÓN DINÁMICA DEL MAPA (CLAVE PARA SOLUCIONAR EL ERROR)
+// IMPORTACIÓN DINÁMICA DEL MAPA
 const ClinicalOverlay = dynamic(
   () => import('@/components/overlays/ClinicalOverlay').then((mod) => mod.ClinicalOverlay),
   { 
-    ssr: false, // Desactiva renderizado en servidor para evitar conflictos con Leaflet
-    loading: () => null // No mostrar nada mientras carga (o poner un spinner)
+    ssr: false, 
+    loading: () => null 
   }
 );
 
-// --- COMPONENTE FICHA ANIMADA (PUNTOS DE DOLOR) ---
+// --- COMPONENTE FICHA ANIMADA (PUNTOS DE DOLOR - APAISADA) ---
 const PainPointCard = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => {
   return (
     <motion.div
-      className="bg-white p-8 rounded-xl border cursor-default"
+      className="group bg-white p-6 rounded-xl border cursor-default"
       // Estado Inicial (Reposo)
       initial={{ 
         y: 0, 
         borderColor: "rgba(243, 244, 246, 1)", // gray-100
-        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" // shadow-md
+        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" // shadow-md standard
       }}
       // Estado Activo (Cuando está en el centro de la pantalla)
       whileInView={{
@@ -42,18 +43,23 @@ const PainPointCard = ({ icon: Icon, title, description }: { icon: any, title: s
         borderColor: "#849700", // Borde Verde DKV
         boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" // shadow-xl
       }}
-      // Configuración de la zona de activación (20% margen superior e inferior)
+      // Configuración de la zona de activación
       viewport={{ margin: "-20% 0px -20% 0px", amount: 0.5 }}
-      // Transición suave (Spring) para evitar mareos
+      // Transición suave (Spring)
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
-      <div className="mb-6 inline-block p-3 bg-dkv-green/5 rounded-full">
-        <Icon className="w-10 h-10 text-dkv-green" strokeWidth={1.5} />
+      {/* HEADER HORIZONTAL: ICONO + TÍTULO (CORREGIDO: ALINEACIÓN VERTICAL CENTRADA) */}
+      <div className="flex items-center gap-4 mb-4">
+        <div className="flex-shrink-0 p-3 bg-dkv-green/5 rounded-full group-hover:bg-dkv-green/10 transition-colors">
+          <Icon className="w-8 h-8 text-dkv-green" strokeWidth={1.5} />
+        </div>
+        <h3 className="text-lg md:text-xl font-bold font-lemon text-dkv-green-dark group-hover:text-dkv-green transition-colors leading-tight">
+          {title}
+        </h3>
       </div>
-      <h3 className="text-xl font-bold font-lemon text-dkv-green-dark mb-3">
-        {title}
-      </h3>
-      <p className="text-dkv-gray leading-relaxed">
+      
+      {/* CUERPO DE TEXTO */}
+      <p className="text-dkv-gray leading-relaxed text-sm md:text-base">
         {description}
       </p>
     </motion.div>
@@ -72,7 +78,7 @@ export default function Home() {
       {/* Conexión Header-Modal */}
       <Header onOpenCalculator={() => setIsCalculatorOpen(true)} />
 
-      {/* --- HERO SECTION (SOLO ÉLITE) --- */}
+      {/* --- HERO SECTION (SOLO ÉLITE - FONDO BLANCO) --- */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-white">
         
         <div className="container mx-auto px-4 relative z-10 flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-16">
@@ -110,9 +116,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* === BLOQUE DE BOTONES (ELIMINADO BOTÓN CTA) === */}
+            {/* === BLOQUE INFERIOR (TEXTO LEGAL - SIN BOTÓN) === */}
             <div className="mt-6 pl-0 lg:pl-10">
-              {/* Precio actualizado a la base de ÉLITE */}
               <p className="text-xs text-dkv-gray-disabled mt-4">
                 *Desde 10,90€/mes. Contratación 100% online en 3 minutos.
               </p>
@@ -140,10 +145,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- PUNTOS DE DOLOR (ANIMADOS AL SCROLL) --- */}
+      {/* --- PUNTOS DE DOLOR (ANIMADOS AL SCROLL + DISEÑO HORIZONTAL CENTRADO) --- */}
       <section className="py-24 bg-[#F0EFED]">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             
             <PainPointCard 
               icon={Clock}
@@ -153,7 +158,7 @@ export default function Home() {
 
             <PainPointCard 
               icon={Users}
-              title="Facilidad: Tus hijos incluidos gratis"
+              title="Facilidad: Tus hijos incluidos"
               description="La salud de tus hijos es lo primero. Si aseguras a un adulto, los menores de 14 años entran gratis en la póliza. Pack familiar real."
             />
 
@@ -167,7 +172,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- SECCIÓN BUSCADOR DE TRATAMIENTOS --- */}
+      {/* --- SECCIÓN BUSCADOR DE TRATAMIENTOS (LIMPIA - SOLO BOTÓN) --- */}
       <section className="py-20 bg-white border-b border-dkv-gray-border">
         <div className="container mx-auto px-4 text-center">
             
@@ -179,6 +184,7 @@ export default function Home() {
               Numerosos servicios dentales gratuitos y resto a precios muy inferiores a mercado.
             </p>
 
+            {/* Botón centrado sin el input */}
             <Button 
               variant="primary" 
               size="lg"
