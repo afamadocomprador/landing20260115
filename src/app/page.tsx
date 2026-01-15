@@ -29,9 +29,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white">
       
-      {/* CAMBIO 1: Conexión Header-Modal 
-         Pasamos la función para abrir el modal al Header
-      */}
+      {/* Conexión Header-Modal */}
       <Header onOpenCalculator={() => setIsCalculatorOpen(true)} />
 
       {/* --- HERO SECTION (SOLO ÉLITE) --- */}
@@ -56,7 +54,7 @@ export default function Home() {
 
               {/* CONTENIDO DENTRO DEL HILO */}
               <div className="relative z-20 space-y-4 pt-1">
-                 {/* CAMBIO 1: Badge actualizado a ÉLITE */}
+                 {/* Badge ÉLITE */}
                  <span className="inline-block py-1 px-3 bg-dkv-green/10 text-dkv-green-dark font-bold text-xs uppercase tracking-wider rounded-full">
                   DKV Dentisalud Élite
                 </span>
@@ -83,7 +81,8 @@ export default function Home() {
                   className="w-full sm:w-auto shadow-xl hover:scale-105 transition-transform"
                   onClick={() => setIsCalculatorOpen(true)}
                 >
-                  Calcular Precio Ahora
+                  {/* MODIFICADO: Texto del botón */}
+                  Calcula tu cuota ahora
                 </Button>
 
                 {/* Botón Secundario con ICONO DE MAPA */}
@@ -113,7 +112,7 @@ export default function Home() {
                 </Button>
               </div>
               
-              {/* CAMBIO 2: Precio actualizado a la base de ÉLITE */}
+              {/* Precio actualizado a la base de ÉLITE */}
               <p className="text-xs text-dkv-gray-disabled mt-4">
                 *Desde 10,90€/mes. Contratación 100% online en 3 minutos.
               </p>
@@ -146,8 +145,9 @@ export default function Home() {
       <section className="py-16 bg-white -mt-10 relative z-20">
         <div className="container mx-auto px-4">
           <div className="bg-white p-8 rounded-xl shadow-dkv-card border border-dkv-gray-border max-w-4xl mx-auto">
+            {/* MODIFICADO: Título de sección */}
             <h2 className="text-2xl font-lemon text-dkv-green-dark text-center mb-6">
-              ¿Cuánto cuesta realmente tu tratamiento?
+              ¿Cuánto me va a costar cada tratamiento?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2 relative">
@@ -164,11 +164,13 @@ export default function Home() {
                 className="h-14 text-lg"
                 onClick={() => setIsTreatmentOpen(true)}
               >
-                Buscar Precio
+                {/* MODIFICADO: Texto del botón */}
+                Consulta tratamientos cubiertos
               </Button>
             </div>
-            <p className="text-center text-sm text-dkv-gray mt-4">
-              Compara nuestras tarifas Classic vs Élite al instante. Sin registros.
+            {/* MODIFICADO: Texto y Color para mejor contraste SEO (Verde oscuro en vez de gris) */}
+            <p className="text-center text-sm font-medium text-dkv-green-dark mt-4">
+              Consulta nuestras tarifas al instante. Sin registros.
             </p>
           </div>
         </div>
@@ -205,56 +207,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- COMPARATIVA DE PLANES --- */}
-      <section className="py-20 bg-white" id="precios">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-lemon text-dkv-green-dark mb-12">
-            Dos formas de ahorrar. Tú eliges.
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Classic */}
-            <div className="border border-dkv-gray-border rounded-xl p-8 hover:border-dkv-green transition-colors">
-              <h3 className="text-2xl font-lemon text-dkv-gray mb-2">DKV Dentisalud Classic</h3>
-              <div className="text-4xl font-bold text-dkv-green-dark mb-4">9,90€<span className="text-base font-normal text-dkv-gray">/mes</span></div>
-              <ul className="text-left space-y-3 mb-8 text-dkv-gray">
-                <li className="flex items-center">✅ Odontología general cubierta</li>
-                <li className="flex items-center">✅ Limpiezas anuales gratis</li>
-                <li className="flex items-center">⚠️ Descuentos estándar en complejos</li>
-              </ul>
-              <Button 
-                variant="outlineWhite" 
-                className="w-full !text-dkv-green border-dkv-green hover:bg-dkv-green hover:!text-white"
-                onClick={() => setIsTreatmentOpen(true)}
-              >
-                Elegir Classic
-              </Button>
-            </div>
-
-            {/* Elite */}
-            <div className="border-2 border-dkv-green rounded-xl p-8 relative shadow-xl transform scale-105 bg-white">
-              <div className="absolute top-0 right-0 bg-dkv-green text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase">
-                Más Vendido
-              </div>
-              <h3 className="text-2xl font-lemon text-dkv-green-dark mb-2">DKV Dentisalud Élite</h3>
-              <div className="text-4xl font-bold text-dkv-green mb-4">14,50€<span className="text-base font-normal text-dkv-gray">/mes</span></div>
-              <p className="text-sm text-dkv-gray mb-6">Ideal para ortodoncias e implantes. El ahorro en un solo tratamiento paga la cuota de 3 años.</p>
-              <ul className="text-left space-y-3 mb-8 text-dkv-gray">
-                <li className="flex items-center font-bold">✅ Todo lo de Classic</li>
-                <li className="flex items-center">✅ Máximo descuento en tratamientos</li>
-                <li className="flex items-center">✅ Ortodoncia e Implantes más baratos</li>
-              </ul>
-              <Button 
-                variant="contract" 
-                className="w-full"
-                onClick={() => setIsTreatmentOpen(true)}
-              >
-                Elegir Élite
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* MODIFICADO: SECCIÓN COMPARATIVA ELIMINADA */}
 
       {/* --- PRUEBA SOCIAL --- */}
       <section className="py-20 bg-dkv-green-dark text-white">
